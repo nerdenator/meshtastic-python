@@ -594,3 +594,26 @@ def test_roundtrip_snake_to_camel_camel_to_snake(a_string):
     value0 = snake_to_camel(a_string=a_string)
     value1 = camel_to_snake(a_string=value0)
     assert a_string == value1, (a_string, value1)
+
+@pytest.mark.unit
+def test_timeout_wait_for_ack_nak_all_false():
+    """
+    When a bare Acknowledgement is received, and it doesn't have
+    "receivedAck", "receivedNak", "receivedImplAck", return False
+    """
+    test_ack = Acknowledgment()
+    test_timeout = Timeout()
+    assert test_timeout.waitForAckNak(test_ack) == False
+
+@pytest.mark.unit
+def test_timeout_wait_for_ack_nak_all_true():
+    """
+    When a bare Acknowledgement is received, and it does have
+    "receivedAck", "receivedNak", "receivedImplAck", return True
+    """
+    test_timeout = Timeout()
+    test_ack = Acknowledgment()
+    test_ack.receivedAck = True
+    test_ack.receivedNak = True
+    test_ack.receivedImplAck = True
+    assert test_timeout.waitForAckNak(test_ack) == True
