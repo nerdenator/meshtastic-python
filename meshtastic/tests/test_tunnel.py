@@ -26,6 +26,37 @@ def test_Tunnel_on_non_linux_system(mock_platform_system):
         assert pytest_wrapped_e.type == Tunnel.TunnelError
         assert mock_socket.called
 
+@pytest.mark.unitslow
+@patch("platform.system")
+def test_Tunnel_without_subnet(mock_platform_system, iface_with_nodes):
+    """Test that we have exception raised when None passed in as subnet"""
+    iface = iface_with_nodes
+    iface.myInfo.my_node_num = 2475227164
+    a_mock = MagicMock()
+    a_mock.return_value = "Linux"
+    mock_platform_system.side_effect = a_mock
+    with pytest.raises(Tunnel.TunnelError) as pytest_wrapped_e:
+        with patch("socket.socket"):
+            Tunnel(iface, subnet=None)
+            iface.close()
+    assert pytest_wrapped_e.type == Tunnel.TunnelError
+    assert pytest_wrapped_e.value.message == "Tunnel() must have a subnet"
+
+@pytest.mark.unitslow
+@patch("platform.system")
+def test_Tunnel_without_netmask(mock_platform_system, iface_with_nodes):
+    """Test that we have exception raised when None passed in as subnet"""
+    iface = iface_with_nodes
+    iface.myInfo.my_node_num = 2475227164
+    a_mock = MagicMock()
+    a_mock.return_value = "Linux"
+    mock_platform_system.side_effect = a_mock
+    with pytest.raises(Tunnel.TunnelError) as pytest_wrapped_e:
+        with patch("socket.socket"):
+            Tunnel(iface, netmask=None)
+            iface.close()
+    assert pytest_wrapped_e.type == Tunnel.TunnelError
+    assert pytest_wrapped_e.value.message == "Tunnel() must have a netmask"
 
 @pytest.mark.unit
 @patch("platform.system")
