@@ -179,6 +179,20 @@ def test_support_info(capsys):
 
 
 @pytest.mark.unit
+def test_support_info_should_print_meshtastic_version_if_no_pypi(capsys):
+    """
+    if there's no pypi version returned, it should print " meshtastic: v0"
+    """
+    with patch('meshtastic.util.get_active_version') as patch_get_active_version:
+        patch_get_active_version.return_value = '0'
+        with patch('meshtastic.util.check_if_newer_version') as patch_check_if_newer_version:
+            patch_check_if_newer_version.return_value = False
+            support_info()
+            out, err = capsys.readouterr()
+            assert " meshtastic: v0" in out
+
+
+@pytest.mark.unit
 def test_catchAndIgnore(caplog):
     """Test catchAndIgnore() does not actually throw an exception, but just logs"""
 
@@ -529,6 +543,13 @@ def test_active_ports_on_supported_devices_mac_no_duplicates_check(
     mock_platform.assert_called()
     mock_sp.assert_called()
 
+
+@pytest.mark.unit
+@patch("subprocess.getstatusoutput")
+@patch("platform.system", return_value="Darwin")
+@patch("meshtastic.utils.get_unique_vendor_ids", return_value="tlora_v1")
+def test_detect_supported_devices_mac(mock_platform, mock_sp):
+    pass
 
 @pytest.mark.unit
 @patch("subprocess.getstatusoutput")
