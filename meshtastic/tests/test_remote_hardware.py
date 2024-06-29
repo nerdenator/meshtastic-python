@@ -31,6 +31,21 @@ def test_onGPIOreceive(capsys):
 
 
 @pytest.mark.unit
+def test_onGPIOreceive_no_gpioMask(capsys, caplog):
+    """
+    Test onGPIOreceive should set gpioValue to 0 if no
+    gpioMask or gpioValue in hw
+    """
+    caplog.set_level(logging.DEBUG)
+    iface = MagicMock(autospec=SerialInterface)
+    packet = {"decoded": {"remotehw":{"type": "foo"}}}
+    onGPIOreceive(packet, iface)
+    _, err = capsys.readouterr()
+    assert "No gpioMask in hw, setting gpioValue to 0" in caplog.text
+    assert err == ""
+
+
+@pytest.mark.unit
 def test_RemoteHardwareClient_no_gpio_channel(capsys):
     """Test that we can instantiate a RemoteHardwareClient instance but there is no channel named channel 'gpio'"""
     iface = MagicMock(autospec=SerialInterface)

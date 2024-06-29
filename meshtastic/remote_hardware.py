@@ -21,6 +21,7 @@ def onGPIOreceive(packet, interface):
             # see https://developers.google.com/protocol-buffers/docs/proto3#default
             # so, we set it here
             gpioValue = 0
+            logging.debug(f"No gpioMask in hw, setting gpioValue to {gpioValue}")
 
     # print(f'mask:{interface.mask}')
     value = int(gpioValue) & int(interface.mask)
